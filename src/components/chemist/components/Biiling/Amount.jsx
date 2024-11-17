@@ -1,6 +1,8 @@
-import React from "react";
+import React, { useState } from "react";
 import { BillingData } from "./BillingData";
+import PreviousBillsPopup from "./PBPopup";
 
+// Helper function to convert number to words
 const numberToWords = (num) => {
   const ones = [
     "",
@@ -59,6 +61,8 @@ const numberToWords = (num) => {
 };
 
 const BillingDetails = () => {
+  const [isModalOpen, setIsModalOpen] = useState(false);
+
   const totalBilledQuantity = BillingData.length;
   const subtotal = BillingData.reduce(
     (acc, item) => acc + parseFloat(item.Value),
@@ -68,6 +72,15 @@ const BillingDetails = () => {
   const gst = (12 / 100) * subtotal;
   const netTotal = subtotal + gst;
   const netTotalInWords = numberToWords(Math.round(netTotal));
+
+  // Toggle Modal Visibility
+  const openModal = () => {
+    setIsModalOpen(true);
+  };
+
+  const closeModal = () => {
+    setIsModalOpen(false);
+  };
 
   return (
     <div className="w-full max-w-screen-xl mx-auto p-0">
@@ -114,7 +127,10 @@ const BillingDetails = () => {
 
       {/* Buttons Section */}
       <div className="mt-6 flex justify-end space-x-2">
-        <button className="px-8 py-2 bg-[#66C398] text-[#19456B] rounded-md shadow-md w-[12rem]">
+        <button
+          onClick={openModal}
+          className="px-8 py-2 bg-[#66C398] text-[#19456B] rounded-md shadow-md w-[12rem]"
+        >
           Previous Bills
         </button>
         <button className="px-8 py-2 bg-[#66C398] text-[#19456B] rounded-md shadow-md w-[12rem]">
@@ -127,7 +143,11 @@ const BillingDetails = () => {
           Next Bill
         </button>
       </div>
+
+      {/* Modal Popup for Previous Bills */}
+      <PreviousBillsPopup isOpen={isModalOpen} closeModal={closeModal} />
     </div>
   );
 };
+
 export default BillingDetails;
