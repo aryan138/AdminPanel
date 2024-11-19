@@ -1,8 +1,8 @@
 import React, { useState } from "react";
 import { BillingData } from "./BillingData";
-import PreviousBillsPopup from "./PBPopup";
+import BillPopup from "./BillPopup"; // Import BillPopup component
+import PreviousBillsPopup from "./PBPopup"; // Import the existing PreviousBillsPopup
 
-// Helper function to convert number to words
 const numberToWords = (num) => {
   const ones = [
     "",
@@ -61,25 +61,33 @@ const numberToWords = (num) => {
 };
 
 const BillingDetails = () => {
-  const [isModalOpen, setIsModalOpen] = useState(false);
+  const [isBillPopupOpen, setIsBillPopupOpen] = useState(false); // State for BillPopup
+  const [isPreviousBillsPopupOpen, setIsPreviousBillsPopupOpen] = useState(false); // State for PreviousBillsPopup
 
   const totalBilledQuantity = BillingData.length;
   const subtotal = BillingData.reduce(
     (acc, item) => acc + parseFloat(item.Value),
     0
   );
-  const tradeDiscount = 0;
+  const tradeDiscount = 0;  // Static value as per your previous implementation
   const gst = (12 / 100) * subtotal;
   const netTotal = subtotal + gst;
   const netTotalInWords = numberToWords(Math.round(netTotal));
 
-  // Toggle Modal Visibility
-  const openModal = () => {
-    setIsModalOpen(true);
+  const openBillPopup = () => {
+    setIsBillPopupOpen(true);  // Open BillPopup when Print button is clicked
   };
 
-  const closeModal = () => {
-    setIsModalOpen(false);
+  const closeBillPopup = () => {
+    setIsBillPopupOpen(false);  // Close BillPopup
+  };
+
+  const openPreviousBillsPopup = () => {
+    setIsPreviousBillsPopupOpen(true);  // Open PreviousBillsPopup when Previous Bills button is clicked
+  };
+
+  const closePreviousBillsPopup = () => {
+    setIsPreviousBillsPopupOpen(false);  // Close PreviousBillsPopup
   };
 
   return (
@@ -92,25 +100,21 @@ const BillingDetails = () => {
 
         {/* Billing Details (SubTotal, Trade Discount, GST) */}
         <div className="flex flex-col space-y-2">
-          {/* SubTotal */}
           <div className="flex justify-between p-2 text-[#19456B] text-lg">
             <p className="pr-48">SubTotal:</p>
             <p>₹{subtotal.toFixed(2)}</p>
           </div>
-          {/* Trade Discount */}
           <div className="flex justify-between p-2 text-[#19456B] text-lg">
             <p>Trade Discount</p>
             <p className="pr-16">{tradeDiscount}%</p>
             <p>{(tradeDiscount / 100) * subtotal}</p>
           </div>
-          {/* GST */}
           <div className="flex justify-between p-2 text-[#19456B] text-lg">
             <p>GST (12%)</p>
-            <p>{(12 / 100) * 100}%</p> {/* Static 12% */}
+            <p>{(12 / 100) * 100}%</p>
             <p>₹{gst.toFixed(2)}</p>
           </div>
           <hr className="border-t border-[#D7D7D7] mt-2" />
-          {/* Net Total */}
           <div className="flex justify-between p-2 text-[#19456B] font-semibold text-lg">
             <p>Net Total:</p>
             <p className="text-[#03B462]">₹{netTotal.toFixed(2)}</p>
@@ -118,17 +122,15 @@ const BillingDetails = () => {
         </div>
       </div>
 
-      {/* Net Total in Words */}
       <div className="mt-2 p-0 text-[#03B462] text-right text-lg">
         <p>
           <strong>{netTotalInWords} Only</strong>
         </p>
       </div>
 
-      {/* Buttons Section */}
       <div className="mt-6 flex justify-end space-x-2">
         <button
-          onClick={openModal}
+          onClick={openPreviousBillsPopup} // Open PreviousBillsPopup on clicking this button
           className="px-8 py-2 bg-[#66C398] text-[#19456B] rounded-md shadow-md w-[12rem]"
         >
           Previous Bills
@@ -136,7 +138,10 @@ const BillingDetails = () => {
         <button className="px-8 py-2 bg-[#66C398] text-[#19456B] rounded-md shadow-md w-[12rem]">
           Save
         </button>
-        <button className="px-8 py-2 bg-[#66C398] text-[#19456B] rounded-md shadow-md w-[12rem]">
+        <button
+          onClick={openBillPopup} // Open BillPopup when Print button is clicked
+          className="px-8 py-2 bg-[#66C398] text-[#19456B] rounded-md shadow-md w-[12rem]"
+        >
           Print
         </button>
         <button className="px-8 py-2 bg-[#66C398] text-[#19456B] rounded-md shadow-md w-[12rem]">
@@ -144,8 +149,14 @@ const BillingDetails = () => {
         </button>
       </div>
 
-      {/* Modal Popup for Previous Bills */}
-      <PreviousBillsPopup isOpen={isModalOpen} closeModal={closeModal} />
+      {/* Bill Popup Modal */}
+      <BillPopup isOpen={isBillPopupOpen} closeModal={closeBillPopup} />
+
+      {/* Previous Bills Popup Modal */}
+      <PreviousBillsPopup
+        isOpen={isPreviousBillsPopupOpen}
+        closeModal={closePreviousBillsPopup}
+      />
     </div>
   );
 };
